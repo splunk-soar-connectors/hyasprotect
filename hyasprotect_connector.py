@@ -125,8 +125,7 @@ class HyasProtectConnector(BaseConnector):
         message = "Can't process response from server. Status Code: {0} Data " \
                   "from server: {1}".format(r.status_code,
                                             r.text.replace('{', '{{').replace(
-                                                '}', '}}')
-                                            )
+                                                '}', '}}'))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message),
                       None)
@@ -262,12 +261,13 @@ class HyasProtectConnector(BaseConnector):
 
         self.save_progress("Connecting to endpoint")
         endpoint = f"{DOMAIN_TEST_CONN_ENDPOINT}"
-        self.save_progress("Connecting to endpoint")
+        ioc = DOMAIN_TEST_VALUE
         # make rest call
         ret_val, response = self._make_rest_call(
             param,
             endpoint,
             action_result,
+            ioc,
             headers=self._headers
         )
         if phantom.is_fail(ret_val):

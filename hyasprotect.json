@@ -1,7 +1,7 @@
 {
   "appid": "45380ac0-35b8-40fb-b010-cee68cfea4bf",
   "name": "Hyas Protect",
-  "description": "This app implements investigative actions that return Hyas Protect Verdict for the given Indicators.",
+  "description": "This app implements investigative actions that return Hyas Protect Verdict for the given Indicators",
   "type": "endpoint",
   "product_vendor": "Hyas",
   "logo": "hyasprotect.svg",
@@ -19,7 +19,7 @@
   "app_wizard_version": "1.0.0",
   "configuration": {
     "apikey": {
-      "description": "API KEY.",
+      "description": "API KEY",
       "data_type": "password",
       "required": true,
       "order": 0,
@@ -31,7 +31,7 @@
     {
       "action": "test connectivity",
       "identifier": "test_connectivity",
-      "description": "Validate the asset configuration for connectivity using supplied configuration.",
+      "description": "Validate the asset configuration for connectivity using supplied configuration",
       "verbose": "",
       "type": "test",
       "read_only": true,
@@ -42,13 +42,13 @@
     {
       "action": "ip verdict",
       "identifier": "ip_verdict",
-      "description": "Perform this action to get the Hyas Verdict for IP.",
+      "description": "Perform this action to get the Hyas Verdict for IP",
       "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
         "ip": {
-          "description": "IP to get Hyas Verdict.",
+          "description": "IP to get Hyas Verdict",
           "data_type": "string",
           "required": true,
           "primary": true,
@@ -91,7 +91,7 @@
           "data_type": "string",
           "contains": [],
           "example_values": [
-            "This domain is trusted', 'This registrar is trusted"
+            "This domain is trusted', This registrar is trusted"
           ]
         },
         {
@@ -137,13 +137,13 @@
     {
       "action": "domain verdict",
       "identifier": "domain_verdict",
-      "description": "Perform this action to get the Hyas Verdict for Domain.",
+      "description": "Perform this action to get the Hyas Verdict for Domain",
       "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
         "domain": {
-          "description": "Domain to get Hyas Verdict.",
+          "description": "Domain to get Hyas Verdict",
           "data_type": "string",
           "required": true,
           "primary": true,
@@ -230,13 +230,13 @@
     {
       "action": "fqdn verdict",
       "identifier": "fqdn_verdict",
-      "description": "Perform this action to get the Hyas Verdict for FQDN.",
+      "description": "Perform this action to get the Hyas Verdict for FQDN",
       "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
         "fqdn": {
-          "description": "FQDN to get Hyas Verdict.",
+          "description": "FQDN to get Hyas Verdict",
           "data_type": "string",
           "required": true,
           "primary": true,
@@ -273,7 +273,7 @@
           "data_type": "string",
           "contains": [],
           "example_values": [
-            "This domain is trusted', 'This registrar is trusted"
+            "This domain is trusted', This registrar is trusted"
           ]
         },
         {
@@ -319,13 +319,13 @@
     {
       "action": "nameserver verdict",
       "identifier": "nameserver_verdict",
-      "description": "Perform this action to get the Hyas Verdict for Nameserver.",
+      "description": "Perform this action to get the Hyas Verdict for Nameserver",
       "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
         "nameserver": {
-          "description": "Nameserver to get Hyas Verdict.",
+          "description": "Nameserver to get Hyas Verdict",
           "data_type": "string",
           "required": true,
           "primary": true,
