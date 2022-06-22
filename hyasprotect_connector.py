@@ -8,11 +8,12 @@
 from __future__ import print_function, unicode_literals
 
 import json
+import re
 
 # Phantom App imports
 import phantom.app as phantom
 import requests
-from bs4 import BeautifulSoup, UnicodeDammit
+from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
@@ -21,102 +22,34 @@ from hyasprotect_consts import *
 
 
 class RetVal(tuple):
+
     def __new__(cls, val1, val2=None):
         return tuple.__new__(RetVal, (val1, val2))
 
 
 class HyasProtectConnector(BaseConnector):
+
     def __init__(self):
 
         # Call the BaseConnectors init first
         super(HyasProtectConnector, self).__init__()
 
         self._state = None
-        self._apikey = None
 
         # Variable to hold a base_url in case the app makes REST calls
         # Do note that the app json defines the asset config, so please
         # modify this as you deem fit.
-        # self._base_url = None
-
-    def _handle_py_ver_compat_for_input_str(self, input_str):
-
-        """
-        This method returns the encoded|original string based on the Python
-        version.
-
-        :param input_str: Input string to be processed
-        :return: input_str (Processed input string based on following logic
-        'input_str - Python 3; encoded input_str -
-        Python 2')
-        """
-        try:
-            if input_str and self._python_version < 3:
-                input_str = UnicodeDammit(input_str).unicode_markup.encode(
-                    "utf-8")
-        except Exception:
-            self.debug_print(
-                "Error occurred while handling python 2to3 compatibility for "
-                "the input string"
-            )
-
-        return input_str
-
-    def _get_error_message_from_exception(self, e):
-        """This function is used to get appropriate error message from the
-        exception.
-        :param e: Exception object
-        :return: error message
-        """
-        error_code = HYAS_UNKNOWN_ERROR_CODE_MSG
-        error_msg = HYAS_UNKNOWN_ERROR_MSG
-        try:
-            if hasattr(e, "args"):
-                if len(e.args) > 1:
-                    error_code = e.args[0]
-                    error_msg = e.args[1]
-                elif len(e.args) == 1:
-                    error_code = HYAS_UNKNOWN_ERROR_CODE_MSG
-                    error_msg = e.args[0]
-        except Exception:
-            pass
-
-        try:
-            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
-        except TypeError:
-            error_msg = HYAS_TYPE_ERROR_MSG
-        except Exception:
-            error_msg = HYAS_UNKNOWN_ERROR_CODE_MSG
-
-        return "Error Code: {0}. Error Message: {1}".format(error_code,
-                                                            error_msg)
-
-    def _validating_ioc(self, action_result, ioc, val):
-        try:
-            if ioc in IOC_NAME:
-                if ioc == 'ip':
-                    return bool(re.fullmatch(IOC_NAME[ioc], val)) or bool(
-                        re.fullmatch(IPV6_REG, val))
-                else:
-                    return bool(re.fullmatch(IOC_NAME[ioc], val))
-        except:
-            return RetVal(
-                action_result.set_status(
-                    phantom.APP_ERROR, "Unable to validate the IOC"
-                ),
-                None,
-            )
+        self._base_url = None
 
     def _process_empty_response(self, response, action_result):
-        if 200 <= response.status_code < 205:
+        if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
 
         return RetVal(
             action_result.set_status(
                 phantom.APP_ERROR,
                 "Empty response and no information in the header"
-            ),
-            None,
+            ), None
         )
 
     def _process_html_response(self, response, action_result):
@@ -125,26 +58,17 @@ class HyasProtectConnector(BaseConnector):
 
         try:
             soup = BeautifulSoup(response.text, "html.parser")
-
-            # Remove the script, style, footer and navigation part from the
-            # HTML message
-            for element in soup(["script", "style", "footer", "nav"]):
-                element.extract()
-
-            error_text = soup.text.encode("utf-8")
-            split_lines = error_text.split("\n")
+            error_text = soup.text
+            split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
-            error_text = "\n".join(split_lines)
-        except Exception:
+            error_text = '\n'.join(split_lines)
+        except:
             error_text = "Cannot parse error details"
 
-        error_text = self._handle_py_ver_compat_for_input_str(error_text)
-
         message = "Status Code: {0}. Data from server:\n{1}\n".format(
-            status_code, error_text
-        )
+            status_code, error_text)
 
-        message = message.replace("{", "{{").replace("}", "}}")
+        message = message.replace(u'{', '{{').replace(u'}', '}}')
         return RetVal(action_result.set_status(phantom.APP_ERROR, message),
                       None)
 
@@ -153,104 +77,112 @@ class HyasProtectConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            self.save_progress("Cannot parse JSON")
             return RetVal(
                 action_result.set_status(
                     phantom.APP_ERROR,
-                    "Unable to parse JSON response. Error: {0}".format(str(e)),
-                ),
-                None,
+                    "Unable to parse JSON response. Error: {0}".format(str(e))
+                ), None
             )
 
         # Please specify the status codes here
-        if 200 <= r.status_code < 205:
+        if 200 <= r.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
-        # error_info = resp_json.get('error', {})
-        if resp_json.get("code") and resp_json.get("message"):
-            error_details = {
-                "message": self._handle_py_ver_compat_for_input_str(
-                    resp_json.get("code")
-                ),
-                "detail": self._handle_py_ver_compat_for_input_str(
-                    resp_json.get("message")
-                ),
-            }
-            return RetVal(
-                action_result.set_status(
-                    phantom.APP_ERROR,
-                    "Error from server, Status Code: {0} data returned: {"
-                    "1}".format(
-                        r.status_code, error_details
-                    ),
-                ),
-                resp_json,
-            )
-        else:
-            message = self._handle_py_ver_compat_for_input_str(
-                r.text.replace("{", "{{").replace("}", "}}")
-            )
-            return RetVal(
-                action_result.set_status(
-                    phantom.APP_ERROR,
-                    "Error from server, Status Code: {0} data returned: {"
-                    "1}".format(
-                        r.status_code, message
-                    ),
-                ),
-                resp_json,
-            )
+        message = "Error from server. Status Code: {0} Data from server: {1}" \
+            .format(r.status_code,
+                    r.text.replace(u'{', '{{').replace(u'}', '}}'))
+
+        return RetVal(action_result.set_status(phantom.APP_ERROR, message),
+                      None)
 
     def _process_response(self, r, action_result):
         # store the r_text in debug data, it will get dumped in the logs if
         # the action fails
-        if hasattr(action_result, "add_debug_data"):
-            action_result.add_debug_data({"r_status_code": r.status_code})
-            action_result.add_debug_data({"r_text": r.text})
-            action_result.add_debug_data({"r_headers": r.headers})
+        if hasattr(action_result, 'add_debug_data'):
+            action_result.add_debug_data({'r_status_code': r.status_code})
+            action_result.add_debug_data({'r_text': r.text})
+            action_result.add_debug_data({'r_headers': r.headers})
 
         # Process each 'Content-Type' of response separately
 
         # Process a json response
-        if "json" in r.headers.get("Content-Type", ""):
+        if 'json' in r.headers.get('Content-Type', ''):
             return self._process_json_response(r, action_result)
 
         # Process an HTML response, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
-        if "html" in r.headers.get("Content-Type", ""):
+        if 'html' in r.headers.get('Content-Type', ''):
             return self._process_html_response(r, action_result)
 
         # it's not content-type that is to be parsed, handle an empty response
-        if (200 <= r.status_code < 205) and (not r.text):
+        if not r.text:
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data " \
                   "from server: {1}".format(r.status_code,
-                                            self._handle_py_ver_compat_for_input_str(
-                                                r.text.replace("{",
-                                                               "{{").replace(
-                                                    "}", "}}")),
+                                            r.text.replace('{', '{{').replace(
+                                                '}', '}}')
                                             )
+
         return RetVal(action_result.set_status(phantom.APP_ERROR, message),
                       None)
 
-    def indicator_data_points(self, results: dict):
-        verdict = results.get("verdict")
-        reason = results.get("reasons")
-        if len(reason) == 0:
-            reason = "N/A"
-        row = {"Verdict": verdict, "Reasons": reason}
-        return row
+    def _get_error_message_from_exception(self, error):
+        """This function is used to get appropriate error message from the
+        exception.
+        :param e: Exception object
+        :return: error message
+        """
+        try:
+            if error.args:
+                if len(error.args) > 1:
+                    error_code = error.args[0]
+                    error_msg = error.args[1]
+                elif len(error.args) == 1:
+                    error_code = HYAS_ERR_CODE_MSG
+                    error_msg = error.args[0]
+            else:
+                error_code = HYAS_ERR_CODE_MSG
+                error_msg = HYAS_ERR_MSG_UNAVAILABLE
+        except:
+            error_code = HYAS_ERR_CODE_MSG
+            error_msg = HYAS_ERR_MSG_UNAVAILABLE
+
+        try:
+            if error_code in HYAS_ERR_CODE_MSG:
+                error_text = f"Error Message: {error_msg}"
+            else:
+                error_text = f"Error Code: {error_code}. Error Message: " \
+                             f"{error_msg}"
+
+        except:
+            error_text = HYAS_PARSE_ERR_MSG
+
+        return error_text
+
+    def _validating_ioc(self, ioc, ioc_value):
+        IOC_NAME = {
+            "ip": IP_REG,
+            "domain": DOMAIN_REG,
+            "fqdn": DOMAIN_REG,
+            "nameserver": DOMAIN_REG,
+        }
+        if ioc == 'ip':
+            return bool(re.fullmatch(IOC_NAME[ioc], ioc_value)) or bool(
+                re.fullmatch(IPV6_REG, ioc_value))
+        else:
+            return bool(re.fullmatch(IOC_NAME[ioc], ioc_value))
 
     def _make_rest_call(
-            self, param,
+            self,
+            param,
             endpoint,
             action_result,
-            input_param,
+            ioc,
             params=None,
             body=None,
             headers=None,
@@ -288,7 +220,7 @@ class HyasProtectConnector(BaseConnector):
         if endpoint == DOMAIN_TEST_CONN_ENDPOINT:
             url = f"{BASE_URL}{endpoint}{DOMAIN_TEST_VALUE}"
         else:
-            url = f"{BASE_URL}{endpoint}{param[input_param]}"
+            url = f"{BASE_URL}{endpoint}{ioc}"
 
         try:
             response = request_func(url, params=params, data=body,
@@ -310,18 +242,25 @@ class HyasProtectConnector(BaseConnector):
             )
         return self._process_response(response, action_result)
 
+    def indicator_data_points(self, results: dict):
+        verdict = results.get("verdict")
+        reason = results.get("reasons")
+        if len(reason) == 0:
+            reason = "N/A"
+        row = {"Verdict": verdict, "Reasons": reason}
+        return row
+
     def _handle_test_connectivity(self, param):
         # Add an action result object to self (BaseConnector) to represent
         # the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
-        action_id = self.get_action_identifier()
-        self.save_progress(f"In action handler for: {action_id}")
-        input_param = DOMAIN_TEST
 
         # NOTE: test connectivity does _NOT_ take any parameters
         # i.e. the param dictionary passed to this handler will be empty.
         # Also typically it does not add any data into an action_result either.
         # The status and progress messages are more important.
+
+        self.save_progress("Connecting to endpoint")
         endpoint = f"{DOMAIN_TEST_CONN_ENDPOINT}"
         self.save_progress("Connecting to endpoint")
         # make rest call
@@ -329,7 +268,6 @@ class HyasProtectConnector(BaseConnector):
             param,
             endpoint,
             action_result,
-            input_param,
             headers=self._headers
         )
         if phantom.is_fail(ret_val):
@@ -344,57 +282,43 @@ class HyasProtectConnector(BaseConnector):
         self.save_progress("Test Connectivity Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
 
-        # For now return Error with a message, in case of success we don't
-        # set the message, but use the summary
-
-    def _handle_all_actions(self, param):
-        all_response = {}
+    def _handle_ip_verdict(self, param):
+        ip_response = {}
         action_id = self.get_action_identifier()
         self.save_progress(f"In action handler for: {action_id}")
         # Add an action result object to self (BaseConnector)
         # to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
-        self.debug_print(action_id_param[action_id])
 
-        # Access action parameters passed in the 'param' dictionary
-        # Required values can be accessed directly
-        # Optional values should use the .get() function
-        # optional_parameter = param.get('optional_parameter', 'default_value')
-
-        # make rest call
         try:
-            input_param = action_id_param[action_id]
-            if input_param in IOC_DETAILS:
-                endpoint = IOC_DETAILS[input_param]["endpoint"]
 
-                validating_ioc = self._validating_ioc(
-                    action_result,
-                    input_param,
-                    param[input_param],
-                )
-                if validating_ioc:
-                    ret_val, response = self._make_rest_call(param,
-                                                             endpoint,
-                                                             action_result,
-                                                             input_param,
-                                                             headers=self._headers
-                                                             )
+            endpoint = IP_REPUTATION_ENDPOINT
+            ipaddress = param['ip']
+            validating_ioc = self._validating_ioc(
+                'ip', ipaddress
+            )
+            if validating_ioc:
+                ret_val, response = self._make_rest_call(param,
+                                                         endpoint,
+                                                         action_result,
+                                                         ipaddress,
+                                                         headers=self._headers
+                                                         )
 
-                    if phantom.is_fail(ret_val):
-                        return ret_val
+                if phantom.is_fail(ret_val):
+                    return ret_val
 
-                    try:
-                        all_response[input_param] = self.indicator_data_points(
-                            response
-                        )
-                        action_result.add_data(all_response)
-                        return action_result.set_status(phantom.APP_SUCCESS)
-                    except:
-                        return action_result.set_status(
-                            phantom.APP_ERROR,
-                            "unable to flatten action json response.",
-                            None,
-                        )
+                try:
+                    ip_response['ip'] = self.indicator_data_points(response
+                                                                   )
+                    action_result.add_data(ip_response)
+                    return action_result.set_status(phantom.APP_SUCCESS)
+                except:
+                    return action_result.set_status(
+                        phantom.APP_ERROR,
+                        "unable to flatten action json response.",
+                        None,
+                    )
 
             else:
                 return action_result.set_status(
@@ -408,27 +332,191 @@ class HyasProtectConnector(BaseConnector):
                 None,
             )
 
-        return action_result.set_status(
-            phantom.APP_ERROR, HYAS_ERR_MSG_INVALID_INDICATOR_VALUE
-        )
+    def _handle_domain_verdict(self, param):
+        # Implement the handler here
+        # use self.save_progress(...) to send progress messages back to the
+        # platform
+        domain_response = {}
+        action_id = self.get_action_identifier()
+        self.save_progress(f"In action handler for: {action_id}")
+        # Add an action result object to self (BaseConnector)
+        # to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        try:
+
+            endpoint = DOMAIN_REPUTATION_ENDPOINT
+            domain_value = param['domain']
+            validating_ioc = self._validating_ioc(
+                'domain', domain_value
+            )
+            if validating_ioc:
+                ret_val, response = self._make_rest_call(param,
+                                                         endpoint,
+                                                         action_result,
+                                                         domain_value,
+                                                         headers=self._headers
+                                                         )
+
+                if phantom.is_fail(ret_val):
+                    return ret_val
+
+                try:
+                    domain_response['domain'] = self.indicator_data_points(
+                        response
+                    )
+                    action_result.add_data(domain_response)
+                    return action_result.set_status(phantom.APP_SUCCESS)
+                except:
+                    return action_result.set_status(
+                        phantom.APP_ERROR,
+                        "unable to flatten action json response.",
+                        None,
+                    )
+
+            else:
+                return action_result.set_status(
+                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                )
+
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Unable to retrieve actions results. Error: {str(e)}",
+                None,
+            )
+
+    def _handle_fqdn_verdict(self, param):
+        # Implement the handler here
+        # use self.save_progress(...) to send progress messages back to the
+        # platform
+        fqdn_response = {}
+        action_id = self.get_action_identifier()
+        self.save_progress(f"In action handler for: {action_id}")
+        # Add an action result object to self (BaseConnector)
+        # to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        try:
+
+            endpoint = FQDN_REPUTATION_ENDPOINT
+            fqdn_value = param['fqdn']
+            validating_ioc = self._validating_ioc(
+                'fqdn', fqdn_value
+            )
+            if validating_ioc:
+                ret_val, response = self._make_rest_call(param,
+                                                         endpoint,
+                                                         action_result,
+                                                         fqdn_value,
+                                                         headers=self._headers
+                                                         )
+
+                if phantom.is_fail(ret_val):
+                    return ret_val
+
+                try:
+                    fqdn_response['fqdn'] = self.indicator_data_points(response
+                                                                       )
+                    action_result.add_data(fqdn_response)
+                    return action_result.set_status(phantom.APP_SUCCESS)
+                except:
+                    return action_result.set_status(
+                        phantom.APP_ERROR,
+                        "unable to flatten action json response.",
+                        None,
+                    )
+
+            else:
+                return action_result.set_status(
+                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                )
+
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Unable to retrieve actions results. Error: {str(e)}",
+                None,
+            )
+
+    def _handle_nameserver_verdict(self, param):
+        # Implement the handler here
+        # use self.save_progress(...) to send progress messages back to the
+        # platform
+        nameserver_response = {}
+        action_id = self.get_action_identifier()
+        self.save_progress(f"In action handler for: {action_id}")
+        # Add an action result object to self (BaseConnector)
+        # to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        try:
+
+            endpoint = NAMESERVER_REPUTATION_ENDPOINT
+            nameserver_value = param['nameserver']
+            validating_ioc = self._validating_ioc(
+                'nameserver', nameserver_value
+            )
+            if validating_ioc:
+                ret_val, response = self._make_rest_call(param,
+                                                         endpoint,
+                                                         action_result,
+                                                         nameserver_value,
+                                                         headers=self._headers
+                                                         )
+
+                if phantom.is_fail(ret_val):
+                    return ret_val
+
+                try:
+                    nameserver_response[
+                        'nameserver'] = self.indicator_data_points(response
+                                                                   )
+                    action_result.add_data(nameserver_response)
+                    return action_result.set_status(phantom.APP_SUCCESS)
+                except:
+                    return action_result.set_status(
+                        phantom.APP_ERROR,
+                        "unable to flatten action json response.",
+                        None,
+                    )
+
+            else:
+                return action_result.set_status(
+                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                )
+
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Unable to retrieve actions results. Error: {str(e)}",
+                None,
+            )
 
     def handle_action(self, param):
+        ret_val = phantom.APP_SUCCESS
 
         # Get the action that we are supposed to execute for this App Run
         action_id = self.get_action_identifier()
 
         self.debug_print("action_id", self.get_action_identifier())
 
-        if action_id in [
-            "ip_verdict",
-            "domain_verdict",
-            "nameserver_verdict",
-            "fqdn_verdict"
+        if action_id == 'ip_verdict':
+            ret_val = self._handle_ip_verdict(param)
 
-        ]:
-            return self._handle_all_actions(param)
-        elif action_id in "test_connectivity":
-            return self._handle_test_connectivity(param)
+        if action_id == 'domain_verdict':
+            ret_val = self._handle_domain_verdict(param)
+
+        if action_id == 'fqdn_verdict':
+            ret_val = self._handle_fqdn_verdict(param)
+
+        if action_id == 'nameserver_verdict':
+            ret_val = self._handle_nameserver_verdict(param)
+
+        if action_id == 'test_connectivity':
+            ret_val = self._handle_test_connectivity(param)
+
+        return ret_val
 
     def initialize(self):
         """
@@ -470,9 +558,9 @@ def main():
 
     argparser = argparse.ArgumentParser()
 
-    argparser.add_argument("input_test_json", help="Input Test JSON file")
-    argparser.add_argument("-u", "--username", help="username", required=False)
-    argparser.add_argument("-p", "--password", help="password", required=False)
+    argparser.add_argument('input_test_json', help='Input Test JSON file')
+    argparser.add_argument('-u', '--username', help='username', required=False)
+    argparser.add_argument('-p', '--password', help='password', required=False)
 
     args = argparser.parse_args()
     session_id = None
@@ -483,30 +571,29 @@ def main():
     if username is not None and password is None:
         # User specified a username but not a password, so ask
         import getpass
-
         password = getpass.getpass("Password: ")
 
     if username and password:
         try:
-            login_url = HyasProtectConnector._get_phantom_base_url() + "/login"
+            login_url = HyasProtectConnector._get_phantom_base_url() + '/login'
 
             print("Accessing the Login page")
             r = requests.get(login_url, verify=False)
-            csrftoken = r.cookies["csrftoken"]
+            csrftoken = r.cookies['csrftoken']
 
             data = dict()
-            data["username"] = username
-            data["password"] = password
-            data["csrfmiddlewaretoken"] = csrftoken
+            data['username'] = username
+            data['password'] = password
+            data['csrfmiddlewaretoken'] = csrftoken
 
             headers = dict()
-            headers["Cookie"] = "csrftoken=" + csrftoken
-            headers["Referer"] = login_url
+            headers['Cookie'] = 'csrftoken=' + csrftoken
+            headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
             r2 = requests.post(login_url, verify=False, data=data,
                                headers=headers)
-            session_id = r2.cookies["sessionid"]
+            session_id = r2.cookies['sessionid']
         except Exception as e:
             print(
                 "Unable to get session id from the platform. Error: " + str(e))
@@ -521,8 +608,8 @@ def main():
         connector.print_progress_message = True
 
         if session_id is not None:
-            in_json["user_session_token"] = session_id
-            connector._set_csrf_info(csrftoken, headers["Referer"])
+            in_json['user_session_token'] = session_id
+            connector._set_csrf_info(csrftoken, headers['Referer'])
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
@@ -530,5 +617,5 @@ def main():
     exit(0)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
