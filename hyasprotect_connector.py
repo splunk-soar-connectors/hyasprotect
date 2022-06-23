@@ -17,63 +17,8 @@ from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-IP = "ip"
-DOMAIN = "domain"
-NAMESERVER = "nameserver"
-FQDN = "fqdn"
-
-HYAS_ERR_MSG_INVALID_INDICATOR_VALUE = "Error: Invalid Indicator value"
-
-BASE_URL = "https://api.hyas.com"
-IP_REPUTATION_ENDPOINT = "/protect/ip/"
-FQDN_REPUTATION_ENDPOINT = "/protect/fqdn/"
-NAMESERVER_REPUTATION_ENDPOINT = "/protect/nameserver/"
-DOMAIN_REPUTATION_ENDPOINT = "/protect/domain/"
-
-APIKEY_HEADER = "x-api-key"  # pragma: allowlist secret
-API_KEY = "apikey"  # pragma: allowlist secret
-
-DOMAIN_TEST_CONN_ENDPOINT = "/protect/domain/"
-DOMAIN_TEST_VALUE = 'google'
-
-# error messages
-HYAS_ERR_CODE_MSG = "Error code unavailable"
-HYAS_ERR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset " \
-                           "configuration and|or action parameters"
-
-HYAS_PARSE_ERR_MSG = "Unable to parse the error message. Please check the " \
-                     "asset configuration and|or action parameters"
-
-HYAS_MSG_CREATED_URL = "Created Query URL"
-HYAS_UNKNOWN_ERROR_CODE_MSG = "Error code unavailable"
-HYAS_INVALID_APIKEY_ERROR = "Please provide a valid api key"
-HYAS_ASSET_ERR_MSG = "Please provide the valid indicator value"
-IP_REG = r'\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[' \
-                 r'0-4][' \
-                 r'0-9]|[01]?[0-9][0-9]?)\b([^\/]|$)'
-IPV6_REG = r"(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{" \
-                   r"1,4}:){1," \
-                   r"7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1," \
-                   r"4}|([0-9a-fA-F]{1," \
-                   r"4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1," \
-                   r"4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1," \
-                   r"3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1," \
-                   r"2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[" \
-                   r"0-9a-fA-F]{1," \
-                   r"4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[" \
-                   r"0-9a-fA-F]{0," \
-                   r"4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0," \
-                   r"1}((25[0-5]|(" \
-                   r"2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[" \
-                   r"0-4]|1{0," \
-                   r"1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(" \
-                   r"2[" \
-                   r"0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{" \
-                   r"0," \
-                   r"1}[0-9]){0,1}[0-9]))"
-DOMAIN_REG = r"^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-_]{0," \
-                     r"61}[A-Za-z0-9])?\.)+[" \
-                     r"A-Za-z0-9][A-Za-z0-9-_]{0,61}[A-Za-z]$"
+# import constant file
+from hyasprotect_consts import *
 
 
 class RetVal(tuple):
@@ -102,9 +47,7 @@ class HyasProtectConnector(BaseConnector):
 
         return RetVal(
             action_result.set_status(
-                phantom.APP_ERROR,
-                "Empty response and no information in the header"
-            ), None
+                phantom.APP_ERROR, EMPTY_RESPONSE), None
         )
 
     def _process_html_response(self, response, action_result):
@@ -118,7 +61,7 @@ class HyasProtectConnector(BaseConnector):
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
         except:
-            error_text = "Cannot parse error details"
+            error_text = ERROR_TEXT
 
         message = "Status Code: {0}. Data from server:\n{1}\n".format(
             status_code, error_text)
@@ -219,12 +162,7 @@ class HyasProtectConnector(BaseConnector):
         return error_text
 
     def _validating_ioc(self, ioc, ioc_value):
-        IOC_NAME = {
-            "ip": IP_REG,
-            "domain": DOMAIN_REG,
-            "fqdn": DOMAIN_REG,
-            "nameserver": DOMAIN_REG,
-        }
+
         if ioc == 'ip':
             return bool(re.fullmatch(IOC_NAME[ioc], ioc_value)) or bool(
                 re.fullmatch(IPV6_REG, ioc_value))
@@ -371,7 +309,7 @@ class HyasProtectConnector(BaseConnector):
                 except:
                     return action_result.set_status(
                         phantom.APP_ERROR,
-                        "unable to flatten action json response.",
+                        UNABLE_TO_FLATTEN_JSON,
                         None,
                     )
 
@@ -425,7 +363,7 @@ class HyasProtectConnector(BaseConnector):
                 except:
                     return action_result.set_status(
                         phantom.APP_ERROR,
-                        "unable to flatten action json response.",
+                        UNABLE_TO_FLATTEN_JSON,
                         None,
                     )
 
@@ -478,7 +416,7 @@ class HyasProtectConnector(BaseConnector):
                 except:
                     return action_result.set_status(
                         phantom.APP_ERROR,
-                        "unable to flatten action json response.",
+                        UNABLE_TO_FLATTEN_JSON,
                         None,
                     )
 
@@ -532,7 +470,7 @@ class HyasProtectConnector(BaseConnector):
                 except:
                     return action_result.set_status(
                         phantom.APP_ERROR,
-                        "unable to flatten action json response.",
+                        UNABLE_TO_FLATTEN_JSON,
                         None,
                     )
 
@@ -556,19 +494,19 @@ class HyasProtectConnector(BaseConnector):
 
         self.debug_print("action_id", self.get_action_identifier())
 
-        if action_id == 'ip_verdict':
+        if action_id == IP_VERDICT:
             ret_val = self._handle_ip_verdict(param)
 
-        if action_id == 'domain_verdict':
+        if action_id == DOMAIN_VERDICT:
             ret_val = self._handle_domain_verdict(param)
 
-        if action_id == 'fqdn_verdict':
+        if action_id == FQDN_VERDICT:
             ret_val = self._handle_fqdn_verdict(param)
 
-        if action_id == 'nameserver_verdict':
+        if action_id == NAMESERVER_VERDICT:
             ret_val = self._handle_nameserver_verdict(param)
 
-        if action_id == 'test_connectivity':
+        if action_id == TEST_CONNECTIVITY:
             ret_val = self._handle_test_connectivity(param)
 
         return ret_val
