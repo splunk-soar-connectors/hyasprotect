@@ -603,7 +603,7 @@ def main():
             headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=False, data=data,
+            r2 = requests.post(login_url, verify=verify, data=data,
                                headers=headers, timeout=HYAS_DEFAULT_REQUEST_TIMEOUT)
             session_id = r2.cookies['sessionid']
         except Exception as e:
