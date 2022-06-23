@@ -1,3 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# -----------------------------------------
+# Phantom sample App Connector python file
+# -----------------------------------------
+
 # File: hyasprotect_connector.py
 #
 # Copyright (c) Hyas, 2022
@@ -13,11 +19,6 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-# -----------------------------------------
-# Phantom sample App Connector python file
-# -----------------------------------------
 
 # Python 3 Compatibility imports
 from __future__ import print_function, unicode_literals
