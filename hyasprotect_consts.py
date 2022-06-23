@@ -44,15 +44,12 @@ DOMAIN_TEST_VALUE = 'google'
 
 # error messages
 HYAS_ERR_CODE_MSG = "Error code unavailable"
-HYAS_ERR_MSG_UNAVAILABLE = (
-    "Error message unavailable."
-    " Please check the asset configuration "
-    "and|or action parameters"
-)
-HYAS_PARSE_ERR_MSG = (
-    "Unable to parse the error message. Please check the asset "
-    "configuration and|or action parameters"
-)
+HYAS_ERR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset " \
+                           "configuration and|or action parameters"
+
+HYAS_PARSE_ERR_MSG = "Unable to parse the error message. Please check the " \
+                     "asset configuration and|or action parameters"
+
 HYAS_MSG_CREATED_URL = "Created Query URL"
 HYAS_UNKNOWN_ERROR_CODE_MSG = "Error code unavailable"
 HYAS_INVALID_APIKEY_ERROR = "Please provide a valid api key"

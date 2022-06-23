@@ -1,11 +1,11 @@
 {
-  "appid": "45380ac0-35b8-40fb-b010-cee68cfea4bf",
+  "appid": "93f07b47-228c-4a2d-afc1-b13a0dd97342",
   "name": "Hyas Protect",
   "description": "This app implements investigative actions that return Hyas Protect Verdict for the given Indicators",
   "type": "endpoint",
   "product_vendor": "Hyas",
-  "logo": "hyasprotect.svg",
-  "logo_dark": "hyasprotect_dark.svg",
+  "logo": "logo_hyasprotect.svg",
+  "logo_dark": "logo_hyasprotect_dark.svg",
   "product_name": "Hyas Protect",
   "python_version": "3",
   "product_version_regex": ".*",
@@ -32,7 +32,6 @@
       "action": "test connectivity",
       "identifier": "test_connectivity",
       "description": "Validate the asset configuration for connectivity using supplied configuration",
-      "verbose": "",
       "type": "test",
       "read_only": true,
       "parameters": {},
@@ -43,7 +42,6 @@
       "action": "ip verdict",
       "identifier": "ip_verdict",
       "description": "Perform this action to get the Hyas Verdict for IP",
-      "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
@@ -138,7 +136,6 @@
       "action": "domain verdict",
       "identifier": "domain_verdict",
       "description": "Perform this action to get the Hyas Verdict for Domain",
-      "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
@@ -231,7 +228,6 @@
       "action": "fqdn verdict",
       "identifier": "fqdn_verdict",
       "description": "Perform this action to get the Hyas Verdict for FQDN",
-      "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
@@ -320,7 +316,6 @@
       "action": "nameserver verdict",
       "identifier": "nameserver_verdict",
       "description": "Perform this action to get the Hyas Verdict for Nameserver",
-      "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
