@@ -2,7 +2,7 @@
     "appid": "93f07b47-228c-4a2d-afc1-b13a0dd97342",
     "name": "Hyas Protect",
     "description": "This app implements investigative actions that return Hyas Protect Verdict for the given Indicators",
-    "type": "endpoint",
+    "type": "investigative",
     "product_vendor": "Hyas",
     "logo": "logo_hyasprotect.svg",
     "logo_dark": "logo_hyasprotect_dark.svg",
