@@ -2,7 +2,7 @@
 # Hyas Protect
 
 Publisher: Hyas  
-Connector Version: 1\.0\.1  
+Connector Version: 1\.1\.0  
 Product Vendor: Hyas  
 Product Name: Hyas Protect  
 Product Version Supported (regex): "\.\*"  
