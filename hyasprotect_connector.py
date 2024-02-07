@@ -156,24 +156,24 @@ class HyasProtectConnector(BaseConnector):
                     error_code = error.args[0]
                     error_msg = error.args[1]
                 elif len(error.args) == 1:
-                    error_code = HYAS_ERR_CODE_MSG
+                    error_code = HYAS_ERROR_CODE_MESSAGE
                     error_msg = error.args[0]
             else:
-                error_code = HYAS_ERR_CODE_MSG
-                error_msg = HYAS_ERR_MSG_UNAVAILABLE
+                error_code = HYAS_ERROR_CODE_MESSAGE
+                error_msg = HYAS_ERROR_MESSAGE_UNAVAILABLE
         except:
-            error_code = HYAS_ERR_CODE_MSG
-            error_msg = HYAS_ERR_MSG_UNAVAILABLE
+            error_code = HYAS_ERROR_CODE_MESSAGE
+            error_msg = HYAS_ERROR_MESSAGE_UNAVAILABLE
 
         try:
-            if error_code in HYAS_ERR_CODE_MSG:
+            if error_code in HYAS_ERROR_CODE_MESSAGE:
                 error_text = f"Error Message: {error_msg}"
             else:
                 error_text = f"Error Code: {error_code}. Error Message: " \
                              f"{error_msg}"
 
         except:
-            error_text = HYAS_PARSE_ERR_MSG
+            error_text = HYAS_PARSE_ERROR_MESSAGE
 
         return error_text
 
@@ -199,7 +199,7 @@ class HyasProtectConnector(BaseConnector):
         # **kwargs can be any additional parameters that requests.request
         # accepts
         # url = BASE_URL + endpoint
-        self.save_progress(HYAS_MSG_CREATED_URL)
+        self.save_progress(HYAS_MESSAGE_CREATED_URL)
         try:
             request_func = getattr(requests, method)
         except AttributeError:
@@ -331,7 +331,7 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -385,7 +385,7 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -438,7 +438,7 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -492,7 +492,7 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -582,7 +582,7 @@ class HyasProtectConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_SUCCESS)
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
