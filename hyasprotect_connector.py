@@ -502,6 +502,96 @@ class HyasProtectConnector(BaseConnector):
                 None,
             )
 
+    def _handle_block_dns(self, param):
+        block_dns_response = {}
+        action_id = self.get_action_identifier()
+        self.save_progress(f"In action handler for: {action_id}")
+        # Add an action result object to self (BaseConnector) to represent
+        # the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        domain = param["domain"]
+        try:
+            if self._validating_ioc("domain", domain):
+                dns_endpoint = BLOCK_DNS_ENDPOINT
+                get_params = {"datatype": "domain", "enabled": "true", "type": "deny"}
+                ret_val, dns_list_response = self._make_rest_call(
+                    param,
+                    dns_endpoint,
+                    action_result,
+                    "",
+                    headers=self._headers,
+                    params=get_params,
+                )
+                if phantom.is_fail(ret_val):
+                    return ret_val
+                deny_list = dns_list_response.get("local", [])
+                list_id = ""
+                for deny in deny_list:
+                    if deny.get("name") == SPLUNK_SOAR_LIST:
+                        list_id = deny.get("id")
+                        self.save_progress("deny list id found")
+                        break
+
+                if not list_id:
+                    self.save_progress("Adding deny list to block dns")
+                    body = {
+                        "type": "DENY",
+                        "datatype": "DOMAIN",
+                        "name": SPLUNK_SOAR_LIST,
+                        "notes": SPLUNK_SOAR_LIST_NOTES,
+                        "enabled": "true",
+                    }
+                    post_param = {"dryrun": "false"}
+                    ret_val, deny_response = self._make_rest_call(
+                        param,
+                        dns_endpoint,
+                        action_result,
+                        "",
+                        method="post",
+                        headers=self._headers,
+                        params=post_param,
+                        body=json.dumps(body),
+                    )
+                    if phantom.is_fail(ret_val):
+                        return ret_val
+                    list_id = deny_response.get("listId")
+                self.save_progress("Adding domain to deny list")
+                block_dns_endpoint = f"{BLOCK_DNS_ENDPOINT}/{list_id}"
+                body = {
+                    "value": domain,
+                    "notes": "Added by splunk soar",
+                    "enabled": "true",
+                }
+                ret_val, dns_response = self._make_rest_call(
+                    param,
+                    block_dns_endpoint,
+                    action_result,
+                    "",
+                    domain,
+                    method="post",
+                    headers=self._headers,
+                    body=json.dumps(body),
+                )
+                if phantom.is_fail(ret_val):
+                    return ret_val
+                block_dns_response["block_dns"] = {
+                    "message": f"{domain} added successfully to deny list:"
+                    f" {SPLUNK_SOAR_LIST}"
+                }
+                action_result.add_data(block_dns_response)
+                return action_result.set_status(phantom.APP_SUCCESS)
+            else:
+                return action_result.set_status(
+                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                )
+
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Unable to retrieve actions results. Error: {str(e)}",
+                None,
+            )
+
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
@@ -521,6 +611,9 @@ class HyasProtectConnector(BaseConnector):
 
         if action_id == NAMESERVER_VERDICT:
             ret_val = self._handle_nameserver_verdict(param)
+
+        if action_id == BLOCK_DNS:
+            ret_val = self._handle_block_dns(param)
 
         if action_id == TEST_CONNECTIVITY:
             ret_val = self._handle_test_connectivity(param)
@@ -547,7 +640,12 @@ class HyasProtectConnector(BaseConnector):
             config = self.get_config()
             self._apikey = config[API_KEY]
             # self.debug_print(self._apikey)
-            self._headers = {APIKEY_HEADER: self._apikey}
+            self._headers = {
+                APIKEY_HEADER: self._apikey,
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "User-Agent": "Splunk SOAR",
+            }
             # self.debug_print(self._headers)
         except Exception:
             return phantom.APP_ERROR

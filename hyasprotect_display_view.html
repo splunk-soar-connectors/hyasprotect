@@ -115,7 +115,7 @@
     {% else %}
     {% if data.ip %}
     <div class="wf-table-div">
-      <h3 class="wf-h3-style">Hyas Protect Verdict for IP</h3>
+      <h3 class="wf-h3-style">HYAS Protect Verdict for IP</h3>
       <table id="hyas_table_ip" class="datatable wf-table-horizontal">
         <thead>
         <tr>
@@ -144,7 +144,7 @@
 
     {% elif data.domain %}
     <div class="wf-table-div">
-      <h3 class="wf-h3-style">Hyas Protect Verdict for Domain</h3>
+      <h3 class="wf-h3-style">HYAS Protect Verdict for Domain</h3>
       <table id="hyas_table_domain" class="datatable wf-table-horizontal">
         <thead>
         <tr>
@@ -172,7 +172,7 @@
       </div>
     {% elif data.nameserver %}
     <div class="wf-table-div">
-      <h3 class="wf-h3-style">Hyas Protect Verdict for Nameserver</h3>
+      <h3 class="wf-h3-style">HYAS Protect Verdict for Nameserver</h3>
       <table id="hyas_table_devicegeo" class="datatable wf-table-horizontal">
         <thead>
         <tr>
@@ -198,9 +198,29 @@
         </tbody>
       </table>
       </div>
+    {% elif data.block_dns %}
+    <div class="wf-table-div">
+      <h3 class="wf-h3-style">HYAS Protect Block DNS</h3>
+      <table id="hyas_table_block_dns" class="datatable wf-table-horizontal">
+        <thead>
+        <tr>
+            <th>Message</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td>
+                <a href="javascript:;">
+                  {{ data.block_dns.message }}
+                   &nbsp;
+                </a>
+          </tr>
+        </tbody>
+      </table>
+      </div>
     {% elif data.fqdn %}
     <div class="wf-table-div">
-      <h3 class="wf-h3-style">Hyas Protect Verdict for FQDN</h3>
+      <h3 class="wf-h3-style">HYAS Protect Verdict for FQDN</h3>
       <table id="hyas_table_fqdn" class="datatable wf-table-horizontal">
         <thead>
         <tr>

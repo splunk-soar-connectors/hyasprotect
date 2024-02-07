@@ -26,6 +26,7 @@ IP_REPUTATION_ENDPOINT = "/protect/ip/"
 FQDN_REPUTATION_ENDPOINT = "/protect/fqdn/"
 NAMESERVER_REPUTATION_ENDPOINT = "/protect/nameserver/"
 DOMAIN_REPUTATION_ENDPOINT = "/protect/domain/"
+BLOCK_DNS_ENDPOINT = "/data/list"
 
 APIKEY_HEADER = "x-api-key"  # pragma: allowlist secret
 API_KEY = "apikey"  # pragma: allowlist secret
@@ -43,7 +44,7 @@ HYAS_PARSE_ERR_MSG = "Unable to parse the error message. Please check the " \
 
 HYAS_MSG_CREATED_URL = "Created Query URL"
 HYAS_UNKNOWN_ERROR_CODE_MSG = "Error code unavailable"
-HYAS_INVALID_APIKEY_ERROR = "Please provide a valid api key"
+HYAS_INVALID_APIKEY_ERROR = "Please provide a valid api key"  # pragma: allowlist secret
 HYAS_ASSET_ERR_MSG = "Please provide the valid indicator value"
 IP_REG = r'\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[' \
                  r'0-4][' \
@@ -85,5 +86,8 @@ IP_VERDICT = 'ip_verdict'
 DOMAIN_VERDICT = 'domain_verdict'
 FQDN_VERDICT = 'fqdn_verdict'
 NAMESERVER_VERDICT = 'nameserver_verdict'
+BLOCK_DNS = 'block_dns'
+SPLUNK_SOAR_LIST = "SPLUNK SOAR list"
+SPLUNK_SOAR_LIST_NOTES = "SPLUNK SOAR list for blocked domains"
 TEST_CONNECTIVITY = 'test_connectivity'
 HYAS_DEFAULT_REQUEST_TIMEOUT = 30  # in seconds

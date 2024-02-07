@@ -1,22 +1,27 @@
 {
     "appid": "93f07b47-228c-4a2d-afc1-b13a0dd97342",
-    "name": "Hyas Protect",
+    "name": "HYAS Protect",
     "description": "This app implements investigative actions that return Hyas Protect Verdict for the given Indicators",
     "type": "investigative",
-    "product_vendor": "Hyas",
+    "product_vendor": "HYAS",
     "logo": "logo_hyasprotect.svg",
     "logo_dark": "logo_hyasprotect_dark.svg",
-    "product_name": "Hyas Protect",
+    "product_name": "HYAS Protect",
     "python_version": "3",
     "product_version_regex": ".*",
-    "publisher": "Hyas",
+    "publisher": "HYAS",
     "license": "Copyright (c) Hyas, 2022",
-    "app_version": "1.1.0",
-    "utctime_updated": "2022-06-22T10:18:10.096081Z",
+    "app_version": "1.2.0",
+    "utctime_updated": "2024-02-07T06:19:32.596833Z",
     "package_name": "phantom_hyasprotect",
     "main_module": "hyasprotect_connector.py",
-    "min_phantom_version": "5.2.0",
+    "min_phantom_version": "5.5.0",
     "app_wizard_version": "1.0.0",
+    "contributors": [
+        {
+            "name": "HYAS Infosec, Inc."
+        }
+    ],
     "fips_compliant": false,
     "configuration": {
         "apikey": {
@@ -375,6 +380,74 @@
                 "height": 5,
                 "view": "hyasprotect_view.display_view",
                 "title": "Nameserver URL"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "block dns",
+            "identifier": "block_dns",
+            "description": "Perform this action to add domain to deny list",
+            "verbose": "",
+            "type": "contain",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "description": "Domain to be added in deny list",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "domain"
+                    ],
+                    "order": 0,
+                    "id": 1,
+                    "param_name": "domain",
+                    "name": "domain"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": ["domain"],
+                    "column_name": "domain",
+                    "column_order": 0,
+                    "example_values": [
+                        "hyas.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.*.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "{domain} added successfully to deny list"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "custom",
+                "width": 12,
+                "height": 5,
+                "view": "hyasprotect_view.display_view",
+                "title": "BLOCK DNS URL"
             },
             "versions": "EQ(*)"
         }

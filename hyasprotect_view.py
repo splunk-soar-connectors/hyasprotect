@@ -63,4 +63,6 @@ def display_view(provides, all_app_runs, context):
         html_file = 'hyasprotect_display_view.html'
     elif provides == 'nameserver verdict':
         html_file = 'hyasprotect_display_view.html'
+    elif provides == 'block dns':
+        html_file = 'hyasprotect_display_view.html'
     return html_file
