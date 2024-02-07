@@ -31,7 +31,7 @@ BLOCK_DNS_ENDPOINT = "/data/list"
 APIKEY_HEADER = "x-api-key"  # pragma: allowlist secret
 API_KEY = "apikey"  # pragma: allowlist secret
 
-DOMAIN_TEST_CONN_ENDPOINT = "/protect/domain/"
+DOMAIN_TEST_ENDPOINT = "/protect/domain/"
 DOMAIN_TEST_VALUE = 'google'
 
 # error messages

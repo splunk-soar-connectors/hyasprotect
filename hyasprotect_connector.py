@@ -154,23 +154,23 @@ class HyasProtectConnector(BaseConnector):
             if error.args:
                 if len(error.args) > 1:
                     error_code = error.args[0]
-                    error_msg = error.args[1]
+                    error_message = error.args[1]
                 elif len(error.args) == 1:
                     error_code = HYAS_ERROR_CODE_MESSAGE
-                    error_msg = error.args[0]
+                    error_message = error.args[0]
             else:
                 error_code = HYAS_ERROR_CODE_MESSAGE
-                error_msg = HYAS_ERROR_MESSAGE_UNAVAILABLE
+                error_message = HYAS_ERROR_MESSAGE_UNAVAILABLE
         except:
             error_code = HYAS_ERROR_CODE_MESSAGE
-            error_msg = HYAS_ERROR_MESSAGE_UNAVAILABLE
+            error_message = HYAS_ERROR_MESSAGE_UNAVAILABLE
 
         try:
             if error_code in HYAS_ERROR_CODE_MESSAGE:
-                error_text = f"Error Message: {error_msg}"
+                error_text = f"Error Message: {error_message}"
             else:
                 error_text = f"Error Code: {error_code}. Error Message: " \
-                             f"{error_msg}"
+                             f"{error_message}"
 
         except:
             error_text = HYAS_PARSE_ERROR_MESSAGE
@@ -225,8 +225,10 @@ class HyasProtectConnector(BaseConnector):
 
         # Create a URL to connect to
 
-        if endpoint == DOMAIN_TEST_CONN_ENDPOINT:
+        if endpoint == DOMAIN_TEST_ENDPOINT:
             url = f"{BASE_URL}{endpoint}{DOMAIN_TEST_VALUE}"
+        elif endpoint == BLOCK_DNS_ENDPOINT:
+            url = f"{BASE_URL}{endpoint}"
         else:
             url = f"{BASE_URL}{endpoint}{ioc}"
 
@@ -269,7 +271,7 @@ class HyasProtectConnector(BaseConnector):
         # The status and progress messages are more important.
 
         self.save_progress("Connecting to endpoint")
-        endpoint = f"{DOMAIN_TEST_CONN_ENDPOINT}"
+        endpoint = f"{DOMAIN_TEST_ENDPOINT}"
         ioc = DOMAIN_TEST_VALUE
         # make rest call
         ret_val, response = self._make_rest_call(
