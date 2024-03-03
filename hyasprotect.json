@@ -387,7 +387,6 @@
             "action": "block dns",
             "identifier": "block_dns",
             "description": "Perform this action to add domain to deny list",
-            "verbose": "",
             "type": "contain",
             "read_only": true,
             "parameters": {
