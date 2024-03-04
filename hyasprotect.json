@@ -411,7 +411,7 @@
                     "contains": [
                         "domain"
                     ],
-                    "column_name": "domain",
+                    "column_name": "Domain",
                     "column_order": 0,
                     "example_values": [
                         "hyas.com"
