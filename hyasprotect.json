@@ -1,7 +1,7 @@
 {
     "appid": "93f07b47-228c-4a2d-afc1-b13a0dd97342",
     "name": "HYAS Protect",
-    "description": "This app implements investigative actions that return Hyas Protect Verdict for the given Indicators",
+    "description": "This app implements investigative actions that return HYAS Protect Verdict for the given Indicators",
     "type": "investigative",
     "product_vendor": "HYAS",
     "logo": "logo_hyasprotect.svg",
@@ -10,7 +10,7 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "HYAS",
-    "license": "Copyright (c) Hyas, 2024",
+    "license": "Copyright (c) Hyas, 2022-2024",
     "app_version": "1.2.0",
     "utctime_updated": "2024-02-07T06:19:32.596833Z",
     "package_name": "phantom_hyasprotect",

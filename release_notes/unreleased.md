@@ -1,2 +1,2 @@
 **Unreleased**
-* Added new action 'Block DNS'
+* Added new action 'block dns'
