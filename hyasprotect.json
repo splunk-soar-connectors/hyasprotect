@@ -10,7 +10,7 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "HYAS",
-    "license": "Copyright (c) Hyas, 2022",
+    "license": "Copyright (c) Hyas, 2024",
     "app_version": "1.2.0",
     "utctime_updated": "2024-02-07T06:19:32.596833Z",
     "package_name": "phantom_hyasprotect",
@@ -28,9 +28,7 @@
             "description": "API KEY",
             "data_type": "password",
             "required": true,
-            "order": 0,
-            "name": "apikey",
-            "id": 0
+            "order": 0
         }
     },
     "actions": [
@@ -60,10 +58,7 @@
                         "ip",
                         "ipv6"
                     ],
-                    "order": 0,
-                    "name": "ip",
-                    "id": 1,
-                    "param_name": "ip"
+                    "order": 0
                 }
             },
             "output": [
@@ -147,10 +142,7 @@
                     "contains": [
                         "domain"
                     ],
-                    "order": 0,
-                    "name": "domain",
-                    "id": 1,
-                    "param_name": "domain"
+                    "order": 0
                 }
             },
             "output": [
@@ -229,10 +221,7 @@
                     "description": "FQDN to get Hyas Verdict",
                     "data_type": "string",
                     "required": true,
-                    "order": 0,
-                    "name": "fqdn",
-                    "id": 1,
-                    "param_name": "fqdn"
+                    "order": 0
                 }
             },
             "output": [
@@ -398,10 +387,7 @@
                     "contains": [
                         "domain"
                     ],
-                    "order": 0,
-                    "id": 1,
-                    "param_name": "domain",
-                    "name": "domain"
+                    "order": 0
                 }
             },
             "output": [
@@ -418,7 +404,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.*.message",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
                         "{domain} added successfully to deny list"
@@ -427,7 +413,7 @@
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
+                    "column_name": "Status",
                     "column_order": 1
                 },
                 {
@@ -453,12 +439,6 @@
             "versions": "EQ(*)"
         }
     ],
-    "custom_made": true,
-    "directory": "hyasprotect_45380ac0-35b8-40fb-b010-cee68cfea4bf",
-    "version": 1,
-    "appname": "-",
-    "executable": "spawn3",
-    "disabled": false,
     "pip_dependencies": {
         "wheel": [
             {
