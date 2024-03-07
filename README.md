@@ -11,7 +11,7 @@ Minimum Product Version: 5\.2\.0
 This app implements investigative actions that return Hyas Protect Verdict for the given Indicators
 
 [comment]: # " File: README.md"
-[comment]: # "  Copyright (c) Hyas, 2024"
+[comment]: # "  Copyright (c) Hyas, 2022-2024"
 [comment]: # "  Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "  you may not use this file except in compliance with the License."
 [comment]: # "  You may obtain a copy of the License at"
