@@ -379,9 +379,6 @@
             "type": "contain",
             "read_only": true,
             "parameters": {
-                "example_values": [
-                    "externaldomain.com"
-                ],
                 "domain": {
                     "description": "Domain to be added in deny list",
                     "data_type": "string",
