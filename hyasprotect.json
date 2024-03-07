@@ -380,7 +380,7 @@
             "read_only": true,
             "parameters": {
                 "example_values": [
-                    "external_domain.com"
+                    "externaldomain.com"
                 ],
                 "domain": {
                     "description": "Domain to be added in deny list",
@@ -410,7 +410,7 @@
                     "data_path": "action_result.*.message",
                     "data_type": "string",
                     "example_values": [
-                        "external_domain.com added successfully to deny list"
+                        "externaldomain.com added successfully to deny list"
                     ]
                 },
                 {
