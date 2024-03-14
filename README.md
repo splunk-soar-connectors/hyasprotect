@@ -1,14 +1,14 @@
 [comment]: # "Auto-generated SOAR connector documentation"
-# Hyas Protect
+# HYAS Protect
 
-Publisher: Hyas  
-Connector Version: 1\.1\.0  
-Product Vendor: Hyas  
-Product Name: Hyas Protect  
-Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.2\.0  
+Publisher: HYAS  
+Connector Version: 1.2.0  
+Product Vendor: HYAS  
+Product Name: HYAS Protect  
+Product Version Supported (regex): ".\*"  
+Minimum Product Version: 6.1.1  
 
-This app implements investigative actions that return Hyas Protect Verdict for the given Indicators
+This app implements investigative actions that return HYAS Protect Verdict for the given Indicators
 
 [comment]: # " File: README.md"
 [comment]: # "  Copyright (c) Hyas, 2022-2024"
@@ -25,7 +25,7 @@ This app implements investigative actions that return Hyas Protect Verdict for t
 [comment]: # ""
 ## Port Details
 
-The app uses HTTP/ HTTPS protocol for communicating with the Hyas Protect server. Below are the
+The app uses HTTP/ HTTPS protocol for communicating with the HYAS Protect server. Below are the
 default ports used by the Splunk SOAR Connector.
 
 | Service Name | Transport Protocol | Port |
@@ -35,7 +35,7 @@ default ports used by the Splunk SOAR Connector.
 
 
 ### Configuration Variables
-The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Hyas Protect asset in SOAR.
+The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a HYAS Protect asset in SOAR.
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
@@ -46,8 +46,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [ip verdict](#action-ip-verdict) - Perform this action to get the Hyas Verdict for IP  
 [domain verdict](#action-domain-verdict) - Perform this action to get the Hyas Verdict for Domain  
 [fqdn verdict](#action-fqdn-verdict) - Perform this action to get the Hyas Verdict for FQDN  
-[nameserver verdict](#action-nameserver-verdict) - Perform this action to get the Hyas Verdict for Nameserver
-[block dns](#action-block-dns) - Perform this action to add domain to deny list
+[nameserver verdict](#action-nameserver-verdict) - Perform this action to get the Hyas Verdict for Nameserver  
+[block dns](#action-block-dns) - Perform this action to add domain to deny list  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -73,15 +73,15 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **ip** |  required  | IP to get Hyas Verdict | string |  `ip`  `ipv6` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.parameter\.ip | string |  `ip`  `ipv6` 
-action\_result\.\*\.Verdict | string | 
-action\_result\.\*\.Reasons | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.parameter.ip | string |  `ip`  `ipv6`  |   1.157.132.70 
+action_result.\*.Verdict | string |  |   Allow 
+action_result.\*.Reasons | string |  |   This domain is trusted', This registrar is trusted 
+action_result.status | string |  |   success  failed 
+action_result.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'domain verdict'
 Perform this action to get the Hyas Verdict for Domain
@@ -95,15 +95,15 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **domain** |  required  | Domain to get Hyas Verdict | string |  `domain` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.parameter\.domain | string |  `domain` 
-action\_result\.\*\.Verdict | string | 
-action\_result\.\*\.Reasons | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.parameter.domain | string |  `domain`  |   hyas.com 
+action_result.\*.Verdict | string |  |   Allow 
+action_result.\*.Reasons | string |  |   This domain is trusted', 'This registrar is trusted 
+action_result.status | string |  |   success  failed 
+action_result.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'fqdn verdict'
 Perform this action to get the Hyas Verdict for FQDN
@@ -117,15 +117,15 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **fqdn** |  required  | FQDN to get Hyas Verdict | string | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.parameter\.fqdn | string | 
-action\_result\.\*\.Verdict | string | 
-action\_result\.\*\.Reasons | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.parameter.fqdn | string |  |   hyas.com 
+action_result.\*.Verdict | string |  |   Allow 
+action_result.\*.Reasons | string |  |   This domain is trusted', This registrar is trusted 
+action_result.status | string |  |   success  failed 
+action_result.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'nameserver verdict'
 Perform this action to get the Hyas Verdict for Nameserver
@@ -139,33 +139,33 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **nameserver** |  required  | Nameserver to get Hyas Verdict | string |  `domain` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.parameter\.nameserver | string |  `domain` 
-action\_result\.\*\.Verdict | string | 
-action\_result\.\*\.Reasons | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.parameter.nameserver | string |  `domain`  |   hyas.com 
+action_result.\*.Verdict | string |  |   Allow 
+action_result.\*.Reasons | string |  |   This domain is trusted', 'This registrar is trusted 
+action_result.status | string |  |   success  failed 
+action_result.message | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'block dns'
 Perform this action to add domain to deny list
 
-Type: **investigate**  
+Type: **contain**  
 Read only: **True**
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**domain** |  required  | Domain to be added to the deny list | string |  `domain` 
+**domain** |  required  | Domain to be added in deny list | string |  `domain` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.parameter\.domain | string |  `domain` 
-action\_result\.\*\.message | string |
-action\_result\.status | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.parameter.domain | string |  `domain`  |   hyas.com 
+action_result.\*.message | string |  |   externaldomain.com added successfully to deny list 
+action_result.status | string |  |  
+action_result.message | string |  |  
+summary.total_objects | numeric |  |  
+summary.total_objects_successful | numeric |  |  
