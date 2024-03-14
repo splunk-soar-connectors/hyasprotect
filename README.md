@@ -11,7 +11,7 @@ Minimum Product Version: 5\.2\.0
 This app implements investigative actions that return Hyas Protect Verdict for the given Indicators
 
 [comment]: # " File: README.md"
-[comment]: # "  Copyright (c) Hyas, 2022"
+[comment]: # "  Copyright (c) Hyas, 2022-2024"
 [comment]: # "  Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "  you may not use this file except in compliance with the License."
 [comment]: # "  You may obtain a copy of the License at"
@@ -46,7 +46,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [ip verdict](#action-ip-verdict) - Perform this action to get the Hyas Verdict for IP  
 [domain verdict](#action-domain-verdict) - Perform this action to get the Hyas Verdict for Domain  
 [fqdn verdict](#action-fqdn-verdict) - Perform this action to get the Hyas Verdict for FQDN  
-[nameserver verdict](#action-nameserver-verdict) - Perform this action to get the Hyas Verdict for Nameserver  
+[nameserver verdict](#action-nameserver-verdict) - Perform this action to get the Hyas Verdict for Nameserver
+[block dns](#action-block-dns) - Perform this action to add domain to deny list
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -143,6 +144,27 @@ DATA PATH | TYPE | CONTAINS
 action\_result\.parameter\.nameserver | string |  `domain` 
 action\_result\.\*\.Verdict | string | 
 action\_result\.\*\.Reasons | string | 
+action\_result\.status | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |
+
+## action: 'block dns'
+Perform this action to add domain to deny list
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**domain** |  required  | Domain to be added to the deny list | string |  `domain` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.parameter\.domain | string |  `domain` 
+action\_result\.\*\.message | string |
 action\_result\.status | string | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 

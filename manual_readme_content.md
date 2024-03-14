@@ -1,5 +1,5 @@
 [comment]: # " File: README.md"
-[comment]: # "  Copyright (c) Hyas, 2022"
+[comment]: # "  Copyright (c) Hyas, 2022-2024"
 [comment]: # "  Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "  you may not use this file except in compliance with the License."
 [comment]: # "  You may obtain a copy of the License at"
@@ -13,7 +13,7 @@
 [comment]: # ""
 ## Port Details
 
-The app uses HTTP/ HTTPS protocol for communicating with the Hyas Protect server. Below are the
+The app uses HTTP/ HTTPS protocol for communicating with the HYAS Protect server. Below are the
 default ports used by the Splunk SOAR Connector.
 
 | Service Name | Transport Protocol | Port |
