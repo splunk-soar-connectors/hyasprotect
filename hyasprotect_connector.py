@@ -6,7 +6,7 @@
 
 # File: hyasprotect_connector.py
 #
-# Copyright (c) Hyas, 2022
+# Copyright (c) Hyas, 2022-2024
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -154,26 +154,26 @@ class HyasProtectConnector(BaseConnector):
             if error.args:
                 if len(error.args) > 1:
                     error_code = error.args[0]
-                    error_msg = error.args[1]
+                    error_message = error.args[1]
                 elif len(error.args) == 1:
-                    error_code = HYAS_ERR_CODE_MSG
-                    error_msg = error.args[0]
+                    error_code = HYAS_ERROR_CODE_MESSAGE
+                    error_message = error.args[0]
             else:
-                error_code = HYAS_ERR_CODE_MSG
-                error_msg = HYAS_ERR_MSG_UNAVAILABLE
+                error_code = HYAS_ERROR_CODE_MESSAGE
+                error_message = HYAS_ERROR_MESSAGE_UNAVAILABLE
         except:
-            error_code = HYAS_ERR_CODE_MSG
-            error_msg = HYAS_ERR_MSG_UNAVAILABLE
+            error_code = HYAS_ERROR_CODE_MESSAGE
+            error_message = HYAS_ERROR_MESSAGE_UNAVAILABLE
 
         try:
-            if error_code in HYAS_ERR_CODE_MSG:
-                error_text = f"Error Message: {error_msg}"
+            if error_code in HYAS_ERROR_CODE_MESSAGE:
+                error_text = f"Error Message: {error_message}"
             else:
                 error_text = f"Error Code: {error_code}. Error Message: " \
-                             f"{error_msg}"
+                             f"{error_message}"
 
         except:
-            error_text = HYAS_PARSE_ERR_MSG
+            error_text = HYAS_PARSE_ERROR_MESSAGE
 
         return error_text
 
@@ -199,7 +199,7 @@ class HyasProtectConnector(BaseConnector):
         # **kwargs can be any additional parameters that requests.request
         # accepts
         # url = BASE_URL + endpoint
-        self.save_progress(HYAS_MSG_CREATED_URL)
+        self.save_progress(HYAS_MESSAGE_CREATED_URL)
         try:
             request_func = getattr(requests, method)
         except AttributeError:
@@ -225,8 +225,10 @@ class HyasProtectConnector(BaseConnector):
 
         # Create a URL to connect to
 
-        if endpoint == DOMAIN_TEST_CONN_ENDPOINT:
+        if endpoint == DOMAIN_TEST_ENDPOINT:
             url = f"{BASE_URL}{endpoint}{DOMAIN_TEST_VALUE}"
+        elif endpoint == BLOCK_DNS_ENDPOINT:
+            url = f"{BASE_URL}{endpoint}"
         else:
             url = f"{BASE_URL}{endpoint}{ioc}"
 
@@ -269,7 +271,7 @@ class HyasProtectConnector(BaseConnector):
         # The status and progress messages are more important.
 
         self.save_progress("Connecting to endpoint")
-        endpoint = f"{DOMAIN_TEST_CONN_ENDPOINT}"
+        endpoint = f"{DOMAIN_TEST_ENDPOINT}"
         ioc = DOMAIN_TEST_VALUE
         # make rest call
         ret_val, response = self._make_rest_call(
@@ -331,7 +333,7 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -385,7 +387,7 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -438,7 +440,7 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -492,7 +494,97 @@ class HyasProtectConnector(BaseConnector):
 
             else:
                 return action_result.set_status(
-                    phantom.APP_ERROR, HYAS_ASSET_ERR_MSG, None
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
+                )
+
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Unable to retrieve actions results. Error: {str(e)}",
+                None,
+            )
+
+    def _handle_block_dns(self, param):
+        block_dns_response = {}
+        action_id = self.get_action_identifier()
+        self.save_progress(f"In action handler for: {action_id}")
+        # Add an action result object to self (BaseConnector) to represent
+        # the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        domain = param["domain"]
+        try:
+            if self._validating_ioc("domain", domain):
+                dns_endpoint = BLOCK_DNS_ENDPOINT
+                get_params = {"datatype": "domain", "enabled": "true", "type": "deny"}
+                ret_val, dns_list_response = self._make_rest_call(
+                    param,
+                    dns_endpoint,
+                    action_result,
+                    "",
+                    headers=self._headers,
+                    params=get_params,
+                )
+                if phantom.is_fail(ret_val):
+                    return ret_val
+                deny_list = dns_list_response.get("local", [])
+                list_id = ""
+                for deny in deny_list:
+                    if deny.get("name") == SPLUNK_SOAR_LIST:
+                        list_id = deny.get("id")
+                        self.save_progress("deny list id found")
+                        break
+
+                if not list_id:
+                    self.save_progress("Adding deny list to block dns")
+                    body = {
+                        "type": "DENY",
+                        "datatype": "DOMAIN",
+                        "name": SPLUNK_SOAR_LIST,
+                        "notes": SPLUNK_SOAR_LIST_NOTES,
+                        "enabled": "true",
+                    }
+                    post_param = {"dryrun": "false"}
+                    ret_val, deny_response = self._make_rest_call(
+                        param,
+                        dns_endpoint,
+                        action_result,
+                        "",
+                        method="post",
+                        headers=self._headers,
+                        params=post_param,
+                        body=json.dumps(body),
+                    )
+                    if phantom.is_fail(ret_val):
+                        return ret_val
+                    list_id = deny_response.get("listId")
+                self.save_progress("Adding domain to deny list")
+                block_dns_endpoint = f"{BLOCK_DNS_ENDPOINT}/{list_id}"
+                body = {
+                    "value": domain,
+                    "notes": "Added by splunk soar",
+                    "enabled": "true",
+                }
+                ret_val, dns_response = self._make_rest_call(
+                    param,
+                    block_dns_endpoint,
+                    action_result,
+                    "",
+                    domain,
+                    method="post",
+                    headers=self._headers,
+                    body=json.dumps(body),
+                )
+                if phantom.is_fail(ret_val):
+                    return ret_val
+                block_dns_response["block_dns"] = {
+                    "message": f"{domain} added successfully to deny list:"
+                    f" {SPLUNK_SOAR_LIST}"
+                }
+                action_result.add_data(block_dns_response)
+                return action_result.set_status(phantom.APP_SUCCESS)
+            else:
+                return action_result.set_status(
+                    phantom.APP_ERROR, HYAS_ASSET_ERROR_MESSAGE, None
                 )
 
         except Exception as e:
@@ -522,6 +614,9 @@ class HyasProtectConnector(BaseConnector):
         if action_id == NAMESERVER_VERDICT:
             ret_val = self._handle_nameserver_verdict(param)
 
+        if action_id == BLOCK_DNS:
+            ret_val = self._handle_block_dns(param)
+
         if action_id == TEST_CONNECTIVITY:
             ret_val = self._handle_test_connectivity(param)
 
@@ -547,7 +642,12 @@ class HyasProtectConnector(BaseConnector):
             config = self.get_config()
             self._apikey = config[API_KEY]
             # self.debug_print(self._apikey)
-            self._headers = {APIKEY_HEADER: self._apikey}
+            self._headers = {
+                APIKEY_HEADER: self._apikey,
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "User-Agent": "Splunk SOAR",
+            }
             # self.debug_print(self._headers)
         except Exception:
             return phantom.APP_ERROR

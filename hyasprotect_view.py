@@ -1,6 +1,6 @@
 # File: hyasprotect_view.py
 #
-# Copyright (c) Hyas, 2022
+# Copyright (c) Hyas, 2022-2024
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,5 +62,7 @@ def display_view(provides, all_app_runs, context):
     elif provides == 'fqdn verdict':
         html_file = 'hyasprotect_display_view.html'
     elif provides == 'nameserver verdict':
+        html_file = 'hyasprotect_display_view.html'
+    elif provides == 'block dns':
         html_file = 'hyasprotect_display_view.html'
     return html_file
