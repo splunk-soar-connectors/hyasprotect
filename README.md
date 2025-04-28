@@ -1,7 +1,7 @@
 # HYAS Protect
 
 Publisher: HYAS \
-Connector Version: 1.2.0 \
+Connector Version: 1.2.1 \
 Product Vendor: HYAS \
 Product Name: HYAS Protect \
 Minimum Product Version: 6.1.1
