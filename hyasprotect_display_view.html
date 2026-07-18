@@ -58,7 +58,7 @@
             <td>IP</td>
             <td>
               <a href="javascript:;"
-                 onclick="context_menu(this, [{'contains': ['ip'],'value': '{{ result.param.ip }}' }], 0, {{ container.id }}, null, false);">
+                 onclick="context_menu(this, [{'contains': ['ip'],'value': '{{ result.param.ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
                 {{ result.param.ip }}
                 &nbsp;
                 <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -73,7 +73,7 @@
             <td>Domain</td>
             <td>
               <a href="javascript:;"
-                 onclick="context_menu(this, [{'contains': ['domain'],'value': '{{ result.param.domain }}' }], 0, {{ container.id }}, null, false);">
+                 onclick="context_menu(this, [{'contains': ['domain'],'value': '{{ result.param.domain|escapejs }}' }], 0, {{ container.id }}, null, false);">
                 {{ result.param.domain }}
                 &nbsp;
                 <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -88,7 +88,7 @@
             <td>FQDN</td>
             <td>
               <a href="javascript:;"
-                 onclick="context_menu(this, [{'contains': ['fqdn'],'value': '{{ result.param.fqdn }}' }], 0, {{ container.id }}, null, false);">
+                 onclick="context_menu(this, [{'contains': ['fqdn'],'value': '{{ result.param.fqdn|escapejs }}' }], 0, {{ container.id }}, null, false);">
                 {{ result.param.fqdn }}
                 &nbsp;
                 <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -103,7 +103,7 @@
             <td>Nameserver</td>
             <td>
               <a href="javascript:;"
-                 onclick="context_menu(this, [{'contains': ['nameserver'],'value': '{{ result.param.nameserver }}' }], 0, {{ container.id }}, null, false);">
+                 onclick="context_menu(this, [{'contains': ['nameserver'],'value': '{{ result.param.nameserver|escapejs }}' }], 0, {{ container.id }}, null, false);">
                 {{ result.param.nameserver }}
                 &nbsp;
                 <span class="fa fa-caret-down" style="font-size: smaller;"></span>
