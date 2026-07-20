@@ -1,9 +1,9 @@
 # HYAS Protect
 
-Publisher: HYAS \
-Connector Version: 1.2.1 \
-Product Vendor: HYAS \
-Product Name: HYAS Protect \
+Publisher: HYAS <br>
+Connector Version: 1.2.1 <br>
+Product Vendor: HYAS <br>
+Product Name: HYAS Protect <br>
 Minimum Product Version: 6.1.1
 
 This app implements investigative actions that return HYAS Protect Verdict for the given Indicators
@@ -28,18 +28,18 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[ip verdict](#action-ip-verdict) - Perform this action to get the Hyas Verdict for IP \
-[domain verdict](#action-domain-verdict) - Perform this action to get the Hyas Verdict for Domain \
-[fqdn verdict](#action-fqdn-verdict) - Perform this action to get the Hyas Verdict for FQDN \
-[nameserver verdict](#action-nameserver-verdict) - Perform this action to get the Hyas Verdict for Nameserver \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[ip verdict](#action-ip-verdict) - Perform this action to get the Hyas Verdict for IP <br>
+[domain verdict](#action-domain-verdict) - Perform this action to get the Hyas Verdict for Domain <br>
+[fqdn verdict](#action-fqdn-verdict) - Perform this action to get the Hyas Verdict for FQDN <br>
+[nameserver verdict](#action-nameserver-verdict) - Perform this action to get the Hyas Verdict for Nameserver <br>
 [block dns](#action-block-dns) - Perform this action to add domain to deny list
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -54,7 +54,7 @@ No Output
 
 Perform this action to get the Hyas Verdict for IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -79,7 +79,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Perform this action to get the Hyas Verdict for Domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -104,7 +104,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Perform this action to get the Hyas Verdict for FQDN
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -129,7 +129,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Perform this action to get the Hyas Verdict for Nameserver
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -154,7 +154,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Perform this action to add domain to deny list
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -178,7 +178,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
